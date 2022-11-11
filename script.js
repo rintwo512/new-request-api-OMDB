@@ -22,14 +22,13 @@
 
 // function fungsiLoop(data){
 //     let card = "";
+    
     // cara loop 1
-
     // for (el of data){
     //     console.log(el);
     // }
 
     // cara loop 2
-
     // for(let i = 0; i < data.length; i ++){
     //     console.log(data[i]);
     // }
@@ -43,6 +42,25 @@
 
 //     container.innerHTML = card;
 
+//     const allBtn = document.querySelectorAll(".modal-detail-btn");
+    
+//     allBtn.forEach(btn => {
+//         btn.addEventListener("click", function() {
+//             const imdb = this.dataset.imdbid;
+//             fungsiGetDetailData(imdb);
+            
+//         });
+//     });
+
+// }
+
+// function fungsiGetDetailData(id){
+//     return fetch(`http://www.omdbapi.com/?apikey=b657b74e&i=${id}`)
+//         .then(success => success.json())
+//         .then(res => {
+            
+//             document.querySelector(".modal-body").innerHTML = fungsiUpdateUI(res);         
+//         });
 // }
 
 // imdb();
@@ -54,107 +72,134 @@
 
 // ******** Requset API menggunakan modern vanilla javascript *******
 
-// const btn = document.querySelector("#btn");
-// function getData(success, error){
-//     btn.addEventListener("click", function () {
+const btn = document.querySelector("#btn");
+function getData(success, error){
+    btn.addEventListener("click", function () {
         
-//         const inp = document.getElementById("keyword").value;
-//         const req = new XMLHttpRequest();
+        const inp = document.getElementById("keyword").value;
+        const req = new XMLHttpRequest();
 
-//         req.onreadystatechange = () =>{
-//             if(req.readyState == 4 ){
-//                 if(req.status === 200){
-//                     success(req.response);
-//                 }else{
-//                     error(req.statusText);
-//                 }
-//             }
-//         }
+        req.onreadystatechange = () =>{
+            if(req.readyState == 4 ){
+                if(req.status === 200){
+                    success(req.response);
+                }else{
+                    error(req.statusText);
+                }
+            }
+        }
 
-//         req.open("GET", `http://www.omdbapi.com/?apikey=b657b74e&s=${inp}`);
-//         req.send();
+        req.open("GET", `http://www.omdbapi.com/?apikey=b657b74e&s=${inp}`);
+        req.send();
 
-//     });
-// }
+    });
+}
 
-// getData(success => {
+getData(success => {
 
-//       const data = JSON.parse(success);
+      const data = JSON.parse(success);
 
-//       const dataReal = data.Search;
+      const dataReal = data.Search;
       
-//       fungsiLoop(dataReal);
+      fungsiLoop(dataReal);
       
+      const allBTN = document.querySelectorAll(".modal-detail-btn");
+      for(let i = 0; i < allBTN.length; i++){
+        allBTN[i].addEventListener("click", function() {
+            const imdbID = this.dataset.imdbid;
+            const dataDetail = fungsiGetDataDetail(imdbID);
 
-//     }, error => {
-//         error(alert("Oops!"));
-// });
+        });
+      }
 
-// function fungsiLoop(dataRealLoop){
-//     let card = "";
-//     for(let i = 0; i < dataRealLoop.length; i++){
-//         card += fungsiView(dataRealLoop[i]);
-//       }
-//     const container = document.querySelector(".card-cont");
-//     container.innerHTML = card;
-// }
+    }, error => {
+        error(alert("Oops!"));
+});
+
+function fungsiLoop(dataRealLoop){
+    let card = "";
+    for(let i = 0; i < dataRealLoop.length; i++){
+        card += fungsiView(dataRealLoop[i]);
+      }
+    const container = document.querySelector(".card-cont");
+    container.innerHTML = card;
+
+    
+}
+
+function fungsiGetDataDetail(ID){
+    const req = new XMLHttpRequest();
+    req.onreadystatechange = function(){
+        if(req.readyState === 4){
+            if(req.status === 200){
+                const dataDet = JSON.parse(req.response);
+                document.querySelector(".modal-body").innerHTML = fungsiUpdateUI(dataDet);
+            }
+        }
+    }
+
+    req.open("GET", "http://www.omdbapi.com/?apikey=b657b74e&i=" + ID);
+    req.send();
+}
+
+
 // ******** Requset API menggunakan modern vanilla javascript *******
 
 
 
 // ******** Requset API menggunakan jQuery *******
 
-function requestData(url){
-    $("#btn").on("click", function() {
+// function requestData(url){
+//     $("#btn").on("click", function() {
 
-        const inp = $("#keyword").val();
+//         const inp = $("#keyword").val();
 
-        $.ajax({
-            url: url + inp,
-            success: res =>{
-                const data = res.Search;
-                let card = ""
-                for(el of data){
-                    card += fungsiView(el);
-                }
-                $(".card-cont").html(card);
+//         $.ajax({
+//             url: url + inp,
+//             success: res =>{
+//                 const data = res.Search;
+//                 let card = ""
+//                 for(el of data){
+//                     card += fungsiView(el);
+//                 }
+//                 $(".card-cont").html(card);
 
-                const allBTN = document.querySelectorAll(".modal-detail-btn");
-                fungsigetDataDetails(allBTN);
+//                 const allBTN = document.querySelectorAll(".modal-detail-btn");
+//                 fungsigetDataDetails(allBTN);
 
-            },
-            error: err => {
-                alert(err);
-            }
-        })
+//             },
+//             error: err => {
+//                 alert(err);
+//             }
+//         })
 
-    });    
-}
+//     });    
+// }
 
 
-requestData("http://www.omdbapi.com/?apikey=b657b74e&s=");
+// requestData("http://www.omdbapi.com/?apikey=b657b74e&s=");
 
-function fungsigetDataDetails(btn){
+// function fungsigetDataDetails(btn){
     
-    btn.forEach(el => {
-        $(el).on("click", function() {
-            const imdb = $(this).data("imdbid");
-            $.ajax({
-                url : `http://www.omdbapi.com/?apikey=b657b74e&i=${imdb}`,
-                success : res => {                    
+//     btn.forEach(el => {
+//         $(el).on("click", function() {
+//             const imdb = $(this).data("imdbid");
+//             $.ajax({
+//                 url : `http://www.omdbapi.com/?apikey=b657b74e&i=${imdb}`,
+//                 success : res => {                    
 
-                    let cardUpdate = fungsiUpdateUI(res);
+//                     let cardUpdate = fungsiUpdateUI(res);
 
-                    $(".modal-body").html(cardUpdate);
-                },
-                error : err => {
-                    alert(err);
-                }
-            })
-        });
-    });
+//                     $(".modal-body").html(cardUpdate);
+//                 },
+//                 error : err => {
+//                     alert(err);
+//                 }
+//             })
+//         });
+//     });
 
-}
+// }
 
 
 // ******** Requset API menggunakan jQuery *******
